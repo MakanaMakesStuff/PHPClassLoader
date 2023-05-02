@@ -25,7 +25,7 @@ class Hello extends Base
 	{
 		$id = "hello";
 		$singular = "Hello";
-		$plural = "Hellos";
+		$plural = "Hello";
 		$supports = ['title', 'author', 'editor'];
 
 		$options = [
