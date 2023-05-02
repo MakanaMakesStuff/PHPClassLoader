@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package Form Builder
+ * @package Loader
  * @version 1.0.0
  */
 /*
-Plugin Name: Forms Builder
-Plugin URI: https://www.wordpress.com
-Description: This plugin allows admins to create custom forms for their application
+Plugin Name: Loader
+Plugin URI: https://github.com/MakanaMakesStuff/PHPClassLoader
+Description: This is an example plugin using a class loader
 Author: Makanaokeakua Edwards | Makri Software Development
 */
 
@@ -16,13 +16,13 @@ add_action('admin_menu', 'add_menu');
 
 function add_menu()
 {
-	add_menu_page(__('Form Builder'), __('Form Builder'), 'manage_options', 'form-builder-menu-page', 'form_builder_page', '', 0);
-	add_submenu_page('form-builder-menu-page', __('Forms'), __('Forms'), 'manage_options', 'edit.php?post_type=forms', '', 0);
+	add_menu_page(__('Loader'), __('Loader'), 'manage_options', 'loader-menu-page', 'loader_page', '', 0);
+	add_submenu_page('loader-menu-page', __('Hello'), __('Hello'), 'manage_options', 'edit.php?post_type=hello', '', 0);
 }
 
-function form_builder_page()
+function loader_page()
 {
-	echo '<h1>Welcome to the Form Builder admin page.</h1>';
+	echo '<h1>Welcome to the Loader Plugin page!</h1>';
 }
 
 function loadClasses()
@@ -46,7 +46,7 @@ function loadClasses()
 	}
 
 	foreach ($loaded_classes as $class) {
-		if (strpos($class, 'FormBuilder\\') === 0 && class_exists($class)) {
+		if (strpos($class, 'Loader\\') === 0 && class_exists($class)) {
 			$instance = new $class();
 			$methods = get_class_methods($instance);
 			if (in_array('init', $methods)) {
