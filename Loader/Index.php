@@ -12,13 +12,6 @@ Author: Makanaokeakua Edwards | Makri Software Development
 */
 
 add_action('init', 'loadClasses', 0);
-add_action('admin_menu', 'add_menu');
-
-function add_menu()
-{
-	add_menu_page(__('Loader'), __('Loader'), 'manage_options', 'loader-menu-page', 'loader_page', '', 0);
-	add_submenu_page('loader-menu-page', __('Hello'), __('Hello'), 'manage_options', 'edit.php?post_type=hello', '', 0);
-}
 
 function loader_page()
 {
@@ -27,26 +20,34 @@ function loader_page()
 
 function loadClasses()
 {
+	$base = "Loader\\";
 	$class_files = glob(__DIR__ . '/Classes/*.php');
+	$settings_files = glob(__DIR__ . '/Settings/*.php');
 	$type_files = glob(__DIR__ . '/Types/*.php');
 	$loaded_classes = [];
 
 	foreach ($class_files as $file) {
 		if (file_exists($file)) {
 			require_once $file;
-			$loaded_classes = array_merge($loaded_classes, get_declared_classes());
+		}
+	}
+
+	foreach ($settings_files as $file) {
+		if (file_exists($file)) {
+			require_once $file;
+			$loaded_classes = $base . "Settings\\" . basename($file, '.php');
 		}
 	}
 
 	foreach ($type_files as $file) {
 		if (file_exists($file)) {
 			require_once $file;
-			$loaded_classes = array_merge($loaded_classes, get_declared_classes());
+			$loaded_classes = $base . "Types\\" . basename($file, '.php');
 		}
 	}
 
 	foreach ($loaded_classes as $class) {
-		if (strpos($class, 'Loader\\') === 0 && class_exists($class)) {
+		if (class_exists($class)) {
 			$instance = new $class();
 			$methods = get_class_methods($instance);
 			if (in_array('init', $methods)) {

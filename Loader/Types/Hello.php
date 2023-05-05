@@ -6,6 +6,7 @@
  * @author Makanaokeakua Edwards | Makri Software Development
  * @copyright 2023 @ Makri Software Development
  * @license Proprietary
+ * @version 1.0.0
  */
 
 declare(strict_types=1);
