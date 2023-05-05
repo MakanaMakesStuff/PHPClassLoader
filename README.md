@@ -5,26 +5,34 @@ e.g:
 ```php
 function loadClasses()
 {
+	$base = "Loader\\";
 	$class_files = glob(__DIR__ . '/Classes/*.php');
+	$settings_files = glob(__DIR__ . '/Settings/*.php');
 	$type_files = glob(__DIR__ . '/Types/*.php');
 	$loaded_classes = [];
 
 	foreach ($class_files as $file) {
 		if (file_exists($file)) {
 			require_once $file;
-			$loaded_classes = array_merge($loaded_classes, get_declared_classes());
+		}
+	}
+
+	foreach ($settings_files as $file) {
+		if (file_exists($file)) {
+			require_once $file;
+			$loaded_classes = $base . "Settings\\" . basename($file, '.php');
 		}
 	}
 
 	foreach ($type_files as $file) {
 		if (file_exists($file)) {
 			require_once $file;
-			$loaded_classes = array_merge($loaded_classes, get_declared_classes());
+			$loaded_classes = $base . "Types\\" . basename($file, '.php');
 		}
 	}
 
 	foreach ($loaded_classes as $class) {
-		if (strpos($class, 'Loader\\') === 0 && class_exists($class)) {
+		if (class_exists($class)) {
 			$instance = new $class();
 			$methods = get_class_methods($instance);
 			if (in_array('init', $methods)) {
