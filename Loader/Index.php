@@ -20,39 +20,50 @@ function loader_page()
 
 function loadClasses()
 {
-	$base = "Loader\\";
-	$class_files = glob(__DIR__ . '/Classes/*.php');
-	$settings_files = glob(__DIR__ . '/Settings/*.php');
-	$type_files = glob(__DIR__ . '/Types/*.php');
-	$loaded_classes = [];
+	$base = 'Loader';
+	$files = glob(__DIR__ . '/**/*.php', GLOB_BRACE);
+	$loaded_classes  = [];
 
-	foreach ($class_files as $file) {
-		if (file_exists($file)) {
-			require_once $file;
-		}
-	}
-
-	foreach ($settings_files as $file) {
-		if (file_exists($file)) {
-			require_once $file;
-			$loaded_classes = $base . "Settings\\" . basename($file, '.php');
-		}
-	}
-
-	foreach ($type_files as $file) {
-		if (file_exists($file)) {
-			require_once $file;
-			$loaded_classes = $base . "Types\\" . basename($file, '.php');
-		}
-	}
-
-	foreach ($loaded_classes as $class) {
-		if (class_exists($class)) {
-			$instance = new $class();
-			$methods = get_class_methods($instance);
-			if (in_array('init', $methods)) {
-				$instance->init();
+	foreach ($files as $file) {
+		if(file_exists($file)) {
+			if(strpos($file, 'Classes') != false) {
+				require_once($file);
+			} else {
+				require_once($file);
+				$file = str_replace(__DIR__, '', $file);
+				$file = preg_replace('/\//', '\\', $file);
+				$file = str_replace('.php', '', $file);
+				$loaded_classes[] = $base . $file;
 			}
 		}
+	}
+
+	$order = [];
+
+	foreach($loaded_classes as $class) {
+		
+		if(class_exists($class)) {
+			$init = new $class();
+
+			if(property_exists($init, 'priority')) {
+				$order[] = [
+					'priority' => $init->priority,
+					'instance' => $init
+				];
+			} else {
+				$order[] = [
+					'priority' => 0,
+					'instance' => $init
+				];
+			}
+		} 
+	}
+
+	usort($order, function($a, $b) {
+		return $a['priority'] - $b['priority'];
+	});
+
+	foreach($order as $class) {
+		$class['instance']->init();
 	}
 }

@@ -18,6 +18,8 @@ use Loader\Classes\Base;
 
 class Hello extends Base
 {
+	public $priority = 1;
+	
 	public function init()
 	{
 		add_action('init', [$this, 'registerTypes']);
