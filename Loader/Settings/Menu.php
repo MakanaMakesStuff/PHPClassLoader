@@ -23,7 +23,7 @@ class Menu extends Base
 		add_action('admin_menu', [$this, 'addMenu']);
 	}
 
-	function add_menu()
+	function addMenu()
 	{
 		add_menu_page(__('Loader'), __('Loader'), 'manage_options', 'loader-menu-page', 'loader_page', '', 0);
 		add_submenu_page('loader-menu-page', __('Hello'), __('Hello'), 'manage_options', 'edit.php?post_type=hello', '', 0);
